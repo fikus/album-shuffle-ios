@@ -11,10 +11,18 @@
 #import "EFAlbumShuffleViewController.h"
 #import "EFRdioSettings.h"
 
-@interface EFAlbumShuffleViewController () <RdioDelegate>
+@interface EFAlbumShuffleViewController () <RdioDelegate, RDAPIRequestDelegate>
 {
     Rdio *rdio;
+    
+    UIButton *sign_in_button;
+    
+    NSArray *albums;
 }
+
+- (void)loadAlbums;
+- (void)shuffleAlbums;
+- (void)playFirstAlbum;
 
 @end
 
@@ -41,14 +49,14 @@
     label.text = @"Album Shuffle";
     label.textColor = [UIColor darkTextColor];
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [button setTitle:@"Sign In" forState:UIControlStateNormal];
-    [button sizeToFit];
-    button.frame = CGRectMake(self.view.bounds.size.width-margin-button.bounds.size.width, 60, button.bounds.size.width, button.bounds.size.height);
-    [button addTarget:self action:@selector(signInActivated:) forControlEvents:UIControlEventTouchUpInside];
+    sign_in_button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [sign_in_button setTitle:@"Sign In" forState:UIControlStateNormal];
+    [sign_in_button sizeToFit];
+    sign_in_button.frame = CGRectMake(self.view.bounds.size.width-margin-sign_in_button.bounds.size.width, 60, sign_in_button.bounds.size.width, sign_in_button.bounds.size.height);
+    [sign_in_button addTarget:self action:@selector(signInActivated:) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:label];
-    [self.view addSubview:button];
+    [self.view addSubview:sign_in_button];
 }
 
 - (void)viewDidLoad
@@ -72,6 +80,25 @@
 - (void)rdioDidAuthorizeUser:(NSDictionary *)user withAccessToken:(NSString *)accessToken
 {
     NSLog(@"rdioDidAuthorizeUser: %@", [user objectForKey:@"firstName"]);
+    
+    sign_in_button.alpha = 0;
+    [self loadAlbums];
+}
+
+#pragma mark -
+#pragma mark RDAPIRequestDelegate
+
+- (void)rdioRequest:(RDAPIRequest *)request didLoadData:(id)data
+{
+    // This is the response from getAlbumsInCollection
+    albums = data;
+    [self shuffleAlbums];
+    [self playFirstAlbum];
+}
+
+- (void)rdioRequest:(RDAPIRequest *)request didFailWithError:(NSError *)error
+{
+    NSLog(@"Request failed: %@", error.description);
 }
 
 #pragma mark -
@@ -79,6 +106,30 @@
 - (void)signInActivated:(id)sender
 {
     [rdio authorizeFromController:self];
+}
+
+- (void)loadAlbums
+{
+    id params = @{@"extras": @"-*,key"};
+    // TODO: Write a new API wrapper with blocks
+    [rdio callAPIMethod:@"getAlbumsInCollection" withParameters:params delegate:self];
+}
+
+- (void)shuffleAlbums
+{
+    NSMutableArray *ma = [albums mutableCopy];
+    for (int j = ma.count-1; j > 0; j--) {
+        int i = arc4random() % j;
+        [ma exchangeObjectAtIndex:j withObjectAtIndex:i];
+    }
+    albums = ma;
+}
+
+- (void)playFirstAlbum
+{
+    if (albums.count > 0) {
+        [rdio.player playSource:albums[0][@"key"]];
+    }
 }
 
 @end
