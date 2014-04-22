@@ -7,6 +7,7 @@
 //
 
 #import "EFAppDelegate.h"
+#import "EFAlbumShuffleViewController.h"
 
 @implementation EFAppDelegate
 
@@ -14,6 +15,7 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
+    self.window.rootViewController = [[EFAlbumShuffleViewController alloc] init];
     [self.window makeKeyAndVisible];
     return YES;
 }
