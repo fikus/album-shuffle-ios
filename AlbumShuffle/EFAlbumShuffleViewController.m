@@ -101,7 +101,12 @@
 - (void)rdioRequest:(RDAPIRequest *)request didLoadData:(id)data
 {
     // This is the response from getAlbumsInCollection
-    albums = data;
+
+    // Get the streamable albums from the collection
+    albums = [(NSArray *)data filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *dict) {
+        return [[obj valueForKey:@"canStream"] boolValue];
+    }]];
+    
     [self shuffleAlbums];
     [self playFirstAlbum];
 }
@@ -120,7 +125,7 @@
 
 - (void)loadAlbums
 {
-    id params = @{@"extras": @"-*,key"};
+    id params = @{@"extras": @"-*,key,canStream"};
     // TODO: Write a new API wrapper with blocks
     [rdio callAPIMethod:@"getAlbumsInCollection" withParameters:params delegate:self];
 }
