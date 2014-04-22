@@ -20,6 +20,11 @@
 		E48C8AD019061F2300548C47 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E48C8ACE19061F2300548C47 /* InfoPlist.strings */; };
 		E48C8AD219061F2300548C47 /* AlbumShuffleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E48C8AD119061F2300548C47 /* AlbumShuffleTests.m */; };
 		E48C8ADD1906203800548C47 /* EFAlbumShuffleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E48C8ADC1906203800548C47 /* EFAlbumShuffleViewController.m */; };
+		E48C8AE31906226600548C47 /* Rdio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AE21906226600548C47 /* Rdio.framework */; };
+		E48C8AE5190622A600548C47 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AE4190622A600548C47 /* SystemConfiguration.framework */; };
+		E48C8AE7190622AF00548C47 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AE6190622AF00548C47 /* CFNetwork.framework */; };
+		E48C8AE9190622BD00548C47 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AE8190622BD00548C47 /* AudioToolbox.framework */; };
+		E48C8AEB190622CB00548C47 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AEA190622CB00548C47 /* Security.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +56,11 @@
 		E48C8AD119061F2300548C47 /* AlbumShuffleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumShuffleTests.m; sourceTree = "<group>"; };
 		E48C8ADB1906203800548C47 /* EFAlbumShuffleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EFAlbumShuffleViewController.h; sourceTree = "<group>"; };
 		E48C8ADC1906203800548C47 /* EFAlbumShuffleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EFAlbumShuffleViewController.m; sourceTree = "<group>"; };
+		E48C8AE21906226600548C47 /* Rdio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Rdio.framework; sourceTree = "<group>"; };
+		E48C8AE4190622A600548C47 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		E48C8AE6190622AF00548C47 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		E48C8AE8190622BD00548C47 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		E48C8AEA190622CB00548C47 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +68,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E48C8AEB190622CB00548C47 /* Security.framework in Frameworks */,
+				E48C8AE9190622BD00548C47 /* AudioToolbox.framework in Frameworks */,
+				E48C8AE7190622AF00548C47 /* CFNetwork.framework in Frameworks */,
+				E48C8AE5190622A600548C47 /* SystemConfiguration.framework in Frameworks */,
+				E48C8AE31906226600548C47 /* Rdio.framework in Frameworks */,
 				E48C8AAF19061F2300548C47 /* CoreGraphics.framework in Frameworks */,
 				E48C8AB119061F2300548C47 /* UIKit.framework in Frameworks */,
 				E48C8AAD19061F2300548C47 /* Foundation.framework in Frameworks */,
@@ -99,6 +114,11 @@
 		E48C8AAB19061F2300548C47 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E48C8AEA190622CB00548C47 /* Security.framework */,
+				E48C8AE8190622BD00548C47 /* AudioToolbox.framework */,
+				E48C8AE6190622AF00548C47 /* CFNetwork.framework */,
+				E48C8AE4190622A600548C47 /* SystemConfiguration.framework */,
+				E48C8AE21906226600548C47 /* Rdio.framework */,
 				E48C8AAC19061F2300548C47 /* Foundation.framework */,
 				E48C8AAE19061F2300548C47 /* CoreGraphics.framework */,
 				E48C8AB019061F2300548C47 /* UIKit.framework */,
@@ -323,6 +343,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-all_load";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -354,6 +375,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				OTHER_LDFLAGS = "-all_load";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -364,6 +386,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AlbumShuffle/AlbumShuffle-Prefix.pch";
 				INFOPLIST_FILE = "AlbumShuffle/AlbumShuffle-Info.plist";
@@ -377,6 +403,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AlbumShuffle/AlbumShuffle-Prefix.pch";
 				INFOPLIST_FILE = "AlbumShuffle/AlbumShuffle-Info.plist";
@@ -444,6 +474,7 @@
 				E48C8AD719061F2300548C47 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E48C8AD819061F2300548C47 /* Build configuration list for PBXNativeTarget "AlbumShuffleTests" */ = {
 			isa = XCConfigurationList;
@@ -452,6 +483,7 @@
 				E48C8ADA19061F2300548C47 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
