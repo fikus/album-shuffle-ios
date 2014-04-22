@@ -62,6 +62,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"rdioAccessToken"];
+    if (token) {
+        [rdio authorizeUsingAccessToken:token fromController:self];
+        sign_in_button.alpha = 0;
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -83,6 +89,10 @@
     
     sign_in_button.alpha = 0;
     [self loadAlbums];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:accessToken forKey:@"rdioAccessToken"];
+    [defaults synchronize];
 }
 
 #pragma mark -
