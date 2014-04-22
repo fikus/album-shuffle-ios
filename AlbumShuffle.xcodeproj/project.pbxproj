@@ -61,6 +61,8 @@
 		E48C8AE6190622AF00548C47 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		E48C8AE8190622BD00548C47 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		E48C8AEA190622CB00548C47 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		E48C8AEC1906269100548C47 /* EFRdioSettings.sample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EFRdioSettings.sample.h; sourceTree = "<group>"; };
+		E48C8AED190627A900548C47 /* EFRdioSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EFRdioSettings.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,12 +132,14 @@
 		E48C8AB219061F2300548C47 /* AlbumShuffle */ = {
 			isa = PBXGroup;
 			children = (
+				E48C8AB319061F2300548C47 /* Supporting Files */,
+				E48C8ABE19061F2300548C47 /* Images.xcassets */,
 				E48C8ABB19061F2300548C47 /* EFAppDelegate.h */,
 				E48C8ABC19061F2300548C47 /* EFAppDelegate.m */,
-				E48C8ABE19061F2300548C47 /* Images.xcassets */,
-				E48C8AB319061F2300548C47 /* Supporting Files */,
 				E48C8ADB1906203800548C47 /* EFAlbumShuffleViewController.h */,
 				E48C8ADC1906203800548C47 /* EFAlbumShuffleViewController.m */,
+				E48C8AED190627A900548C47 /* EFRdioSettings.h */,
+				E48C8AEC1906269100548C47 /* EFRdioSettings.sample.h */,
 			);
 			path = AlbumShuffle;
 			sourceTree = "<group>";
