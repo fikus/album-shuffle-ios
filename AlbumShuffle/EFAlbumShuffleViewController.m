@@ -17,7 +17,11 @@
     
     UIButton *sign_in_button;
     
+    UIButton *next_button;
+    
     NSArray *albums;
+    
+    int album_index;
 }
 
 - (void)loadAlbums;
@@ -54,9 +58,19 @@
     [sign_in_button sizeToFit];
     sign_in_button.frame = CGRectMake(self.view.bounds.size.width-margin-sign_in_button.bounds.size.width, 60, sign_in_button.bounds.size.width, sign_in_button.bounds.size.height);
     [sign_in_button addTarget:self action:@selector(signInActivated:) forControlEvents:UIControlEventTouchUpInside];
+    
+    next_button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [next_button setTitle:@"Next Album" forState:UIControlStateNormal];
+    [next_button sizeToFit];
+    CGRect frame = next_button.frame;
+    frame.origin.x = margin;
+    frame.origin.y = 100;
+    next_button.frame = frame;
+    [next_button addTarget:self action:@selector(nextAlbumActivated:) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:label];
     [self.view addSubview:sign_in_button];
+    [self.view addSubview:next_button];
 }
 
 - (void)viewDidLoad
@@ -121,6 +135,12 @@
 - (void)signInActivated:(id)sender
 {
     [rdio authorizeFromController:self];
+}
+
+- (void)nextAlbumActivated:(id)sender
+{
+    album_index = (album_index+1) % albums.count;
+    [rdio.player playSource:albums[album_index][@"key"]];
 }
 
 - (void)loadAlbums
