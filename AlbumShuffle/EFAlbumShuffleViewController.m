@@ -11,7 +11,7 @@
 #import "EFAlbumShuffleViewController.h"
 #import "EFRdioSettings.h"
 
-@interface EFAlbumShuffleViewController () <RdioDelegate, RDAPIRequestDelegate>
+@interface EFAlbumShuffleViewController () <RdioDelegate, RDAPIRequestDelegate, RDPlayerDelegate>
 {
     int albumIndex_;
 }
@@ -19,6 +19,9 @@
 @property (nonatomic, strong) Rdio* rdio;
 @property (nonatomic, strong) UIButton *signInButton;
 @property (nonatomic, strong) UIButton *nextButton;
+@property (nonatomic, strong) UIButton *playPauseButton;
+@property (nonatomic, strong) UIButton *nextTrackButton;
+@property (nonatomic, strong) UIButton *previousTrackButton;
 @property (nonatomic, copy) NSArray *albums;
 
 - (void)loadAlbums;
@@ -37,6 +40,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.rdio = [[Rdio alloc] initWithConsumerKey:RDIO_APP_KEY andSecret:RDIO_APP_SECRET delegate:self];
+        self.rdio.player.delegate = self;
     }
     return self;
 }
@@ -67,9 +71,19 @@
     [button addTarget:self action:@selector(nextAlbumActivated:) forControlEvents:UIControlEventTouchUpInside];
     self.nextButton = button;
 
+    button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [button setTitle:@" " forState:UIControlStateNormal];
+    button.titleLabel.font = [UIFont boldSystemFontOfSize:40];
+    [button sizeToFit];
+    CGFloat left = (floor)(self.view.bounds.size.width/2 - button.bounds.size.width/2);
+    button.frame = CGRectMake(left, 400, button.bounds.size.width, button.bounds.size.height);
+    [button addTarget:self action:@selector(playPauseActivated:) forControlEvents:UIControlEventTouchUpInside];
+    self.playPauseButton = button;
+
     [self.view addSubview:label];
     [self.view addSubview:self.signInButton];
     [self.view addSubview:self.nextButton];
+    [self.view addSubview:self.playPauseButton];
 }
 
 - (void)viewDidLoad
@@ -131,6 +145,36 @@
 - (void)rdioRequest:(RDAPIRequest *)request didFailWithError:(NSError *)error
 {
     NSLog(@"Request failed: %@", error.description);
+}
+
+#pragma mark -
+#pragma mark RDPlayerDelegate
+
+- (void)rdioPlayerChangedFromState:(RDPlayerState)oldState toState:(RDPlayerState)newState
+{
+    NSString *title;
+    if (newState == RDPlayerStatePlaying) {
+        title = @"||";
+    } else if (newState == RDPlayerStateInitializing || newState == RDPlayerStateStopped) {
+        title = @" ";
+    } else {
+        title = @">";
+    }
+    [self.playPauseButton setTitle:title forState:UIControlStateNormal];
+}
+
+- (BOOL)rdioIsPlayingElsewhere
+{
+    return NO;
+}
+
+
+#pragma mark -
+#pragma mark Player control
+
+- (void)playPauseActivated:(id)sender
+{
+    [self.rdio.player togglePause];
 }
 
 #pragma mark -
