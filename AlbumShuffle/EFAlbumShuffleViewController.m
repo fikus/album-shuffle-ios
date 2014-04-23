@@ -13,16 +13,13 @@
 
 @interface EFAlbumShuffleViewController () <RdioDelegate, RDAPIRequestDelegate>
 {
-    Rdio *rdio;
-    
-    UIButton *sign_in_button;
-    
-    UIButton *next_button;
-    
-    NSArray *albums;
-    
-    int album_index;
+    int albumIndex_;
 }
+
+@property (nonatomic, strong) Rdio* rdio;
+@property (nonatomic, strong) UIButton *signInButton;
+@property (nonatomic, strong) UIButton *nextButton;
+@property (nonatomic, copy) NSArray *albums;
 
 - (void)loadAlbums;
 - (void)shuffleAlbums;
@@ -39,7 +36,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        rdio = [[Rdio alloc] initWithConsumerKey:RDIO_APP_KEY andSecret:RDIO_APP_SECRET delegate:self];
+        self.rdio = [[Rdio alloc] initWithConsumerKey:RDIO_APP_KEY andSecret:RDIO_APP_SECRET delegate:self];
     }
     return self;
 }
@@ -53,24 +50,26 @@
     label.text = @"Album Shuffle";
     label.textColor = [UIColor darkTextColor];
     
-    sign_in_button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [sign_in_button setTitle:@"Sign In" forState:UIControlStateNormal];
-    [sign_in_button sizeToFit];
-    sign_in_button.frame = CGRectMake(self.view.bounds.size.width-margin-sign_in_button.bounds.size.width, 40, sign_in_button.bounds.size.width, sign_in_button.bounds.size.height);
-    [sign_in_button addTarget:self action:@selector(signInActivated:) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [button setTitle:@"Sign In" forState:UIControlStateNormal];
+    [button sizeToFit];
+    button.frame = CGRectMake(self.view.bounds.size.width-margin-button.bounds.size.width, 40, button.bounds.size.width, button.bounds.size.height);
+    [button addTarget:self action:@selector(signInActivated:) forControlEvents:UIControlEventTouchUpInside];
+    self.signInButton = button;
     
-    next_button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [next_button setTitle:@"Next Album" forState:UIControlStateNormal];
-    [next_button sizeToFit];
-    CGRect frame = next_button.frame;
+    button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [button setTitle:@"Next Album" forState:UIControlStateNormal];
+    [button sizeToFit];
+    CGRect frame = button.frame;
     frame.origin.x = margin;
     frame.origin.y = 100;
-    next_button.frame = frame;
-    [next_button addTarget:self action:@selector(nextAlbumActivated:) forControlEvents:UIControlEventTouchUpInside];
+    button.frame = frame;
+    [button addTarget:self action:@selector(nextAlbumActivated:) forControlEvents:UIControlEventTouchUpInside];
+    self.nextButton = button;
 
     [self.view addSubview:label];
-    [self.view addSubview:sign_in_button];
-    [self.view addSubview:next_button];
+    [self.view addSubview:self.signInButton];
+    [self.view addSubview:self.nextButton];
 }
 
 - (void)viewDidLoad
@@ -79,7 +78,7 @@
     
     NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"rdioAccessToken"];
     if (token) {
-        [rdio authorizeUsingAccessToken:token fromController:self];
+        [self.rdio authorizeUsingAccessToken:token fromController:self];
     }
 }
 
@@ -101,11 +100,11 @@
     NSLog(@"rdioDidAuthorizeUser: %@", user[@"firstName"]);
     
     NSString *title = [NSString stringWithFormat:@"Signed in as %@ %@", user[@"firstName"], user[@"lastName"]];
-    [sign_in_button setTitle:title forState:UIControlStateNormal];
-    CGFloat right = sign_in_button.frame.origin.x + sign_in_button.bounds.size.width;
-    [sign_in_button sizeToFit];
-    sign_in_button.frame = CGRectMake(right-sign_in_button.bounds.size.width, sign_in_button.frame.origin.y, sign_in_button.bounds.size.width, sign_in_button.bounds.size.height);
-    sign_in_button.enabled = NO;
+    [self.signInButton setTitle:title forState:UIControlStateNormal];
+    CGFloat right = self.signInButton.frame.origin.x + self.signInButton.bounds.size.width;
+    [self.signInButton sizeToFit];
+    self.signInButton.frame = CGRectMake(right-self.signInButton.bounds.size.width, self.signInButton.frame.origin.y, self.signInButton.bounds.size.width, self.signInButton.bounds.size.height);
+    self.signInButton.enabled = NO;
     [self loadAlbums];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -121,7 +120,7 @@
     // This is the response from getAlbumsInCollection
 
     // Get the streamable albums from the collection
-    albums = [(NSArray *)data filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *dict) {
+    self.albums = [(NSArray *)data filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *dict) {
         return [[obj valueForKey:@"canStream"] boolValue];
     }]];
     
@@ -138,36 +137,36 @@
 
 - (void)signInActivated:(id)sender
 {
-    [rdio authorizeFromController:self];
+    [self.rdio authorizeFromController:self];
 }
 
 - (void)nextAlbumActivated:(id)sender
 {
-    album_index = (album_index+1) % albums.count;
-    [rdio.player playSource:albums[album_index][@"key"]];
+    albumIndex_ = (albumIndex_+1) % self.albums.count;
+    [self.rdio.player playSource:self.albums[albumIndex_][@"key"]];
 }
 
 - (void)loadAlbums
 {
     id params = @{@"extras": @"-*,key,canStream"};
     // TODO: Write a new API wrapper with blocks
-    [rdio callAPIMethod:@"getAlbumsInCollection" withParameters:params delegate:self];
+    [self.rdio callAPIMethod:@"getAlbumsInCollection" withParameters:params delegate:self];
 }
 
 - (void)shuffleAlbums
 {
-    NSMutableArray *ma = [albums mutableCopy];
+    NSMutableArray *ma = [self.albums mutableCopy];
     for (int j = ma.count-1; j > 0; j--) {
         int i = arc4random() % j;
         [ma exchangeObjectAtIndex:j withObjectAtIndex:i];
     }
-    albums = ma;
+    self.albums = ma;
 }
 
 - (void)playFirstAlbum
 {
-    if (albums.count > 0) {
-        [rdio.player playSource:albums[0][@"key"]];
+    if (self.albums.count > 0) {
+        [self.rdio.player playSource:self.albums[0][@"key"]];
     }
 }
 
