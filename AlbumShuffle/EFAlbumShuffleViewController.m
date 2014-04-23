@@ -56,7 +56,7 @@
     sign_in_button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [sign_in_button setTitle:@"Sign In" forState:UIControlStateNormal];
     [sign_in_button sizeToFit];
-    sign_in_button.frame = CGRectMake(self.view.bounds.size.width-margin-sign_in_button.bounds.size.width, 60, sign_in_button.bounds.size.width, sign_in_button.bounds.size.height);
+    sign_in_button.frame = CGRectMake(self.view.bounds.size.width-margin-sign_in_button.bounds.size.width, 40, sign_in_button.bounds.size.width, sign_in_button.bounds.size.height);
     [sign_in_button addTarget:self action:@selector(signInActivated:) forControlEvents:UIControlEventTouchUpInside];
     
     next_button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -80,7 +80,6 @@
     NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"rdioAccessToken"];
     if (token) {
         [rdio authorizeUsingAccessToken:token fromController:self];
-        sign_in_button.alpha = 0;
     }
 }
 
@@ -99,9 +98,14 @@
 
 - (void)rdioDidAuthorizeUser:(NSDictionary *)user withAccessToken:(NSString *)accessToken
 {
-    NSLog(@"rdioDidAuthorizeUser: %@", [user objectForKey:@"firstName"]);
+    NSLog(@"rdioDidAuthorizeUser: %@", user[@"firstName"]);
     
-    sign_in_button.alpha = 0;
+    NSString *title = [NSString stringWithFormat:@"Signed in as %@ %@", user[@"firstName"], user[@"lastName"]];
+    [sign_in_button setTitle:title forState:UIControlStateNormal];
+    CGFloat right = sign_in_button.frame.origin.x + sign_in_button.bounds.size.width;
+    [sign_in_button sizeToFit];
+    sign_in_button.frame = CGRectMake(right-sign_in_button.bounds.size.width, sign_in_button.frame.origin.y, sign_in_button.bounds.size.width, sign_in_button.bounds.size.height);
+    sign_in_button.enabled = NO;
     [self loadAlbums];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
