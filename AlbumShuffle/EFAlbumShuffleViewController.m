@@ -44,19 +44,19 @@
 - (void)loadView
 {
     [super loadView];
-    
+
     CGFloat margin = 20;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(margin, 60, self.view.bounds.size.width-2*margin, 40)];
     label.text = @"Album Shuffle";
     label.textColor = [UIColor darkTextColor];
-    
+
     UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [button setTitle:@"Sign In" forState:UIControlStateNormal];
     [button sizeToFit];
     button.frame = CGRectMake(self.view.bounds.size.width-margin-button.bounds.size.width, 40, button.bounds.size.width, button.bounds.size.height);
     [button addTarget:self action:@selector(signInActivated:) forControlEvents:UIControlEventTouchUpInside];
     self.signInButton = button;
-    
+
     button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [button setTitle:@"Next Album" forState:UIControlStateNormal];
     [button sizeToFit];
@@ -75,7 +75,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"rdioAccessToken"];
     if (token) {
         [self.rdio authorizeUsingAccessToken:token fromController:self];
@@ -98,7 +98,7 @@
 - (void)rdioDidAuthorizeUser:(NSDictionary *)user withAccessToken:(NSString *)accessToken
 {
     NSLog(@"rdioDidAuthorizeUser: %@", user[@"firstName"]);
-    
+
     NSString *title = [NSString stringWithFormat:@"Signed in as %@ %@", user[@"firstName"], user[@"lastName"]];
     [self.signInButton setTitle:title forState:UIControlStateNormal];
     CGFloat right = self.signInButton.frame.origin.x + self.signInButton.bounds.size.width;
@@ -106,7 +106,7 @@
     self.signInButton.frame = CGRectMake(right-self.signInButton.bounds.size.width, self.signInButton.frame.origin.y, self.signInButton.bounds.size.width, self.signInButton.bounds.size.height);
     self.signInButton.enabled = NO;
     [self loadAlbums];
-    
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:accessToken forKey:@"rdioAccessToken"];
     [defaults synchronize];
@@ -123,7 +123,7 @@
     self.albums = [(NSArray *)data filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *dict) {
         return [[obj valueForKey:@"canStream"] boolValue];
     }]];
-    
+
     [self shuffleAlbums];
     [self playFirstAlbum];
 }
