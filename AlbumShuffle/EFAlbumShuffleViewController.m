@@ -22,6 +22,7 @@
 @property (nonatomic, strong) UIButton *playPauseButton;
 @property (nonatomic, strong) UIButton *nextTrackButton;
 @property (nonatomic, strong) UIButton *previousTrackButton;
+@property (nonatomic, strong) UIButton *nowPlayingButton;
 @property (nonatomic, copy) NSArray *albums;
 
 - (void)loadAlbums;
@@ -42,8 +43,15 @@
     if (self) {
         self.rdio = [[Rdio alloc] initWithConsumerKey:RDIO_APP_KEY andSecret:RDIO_APP_SECRET delegate:self];
         self.rdio.player.delegate = self;
+
+        [self.rdio.player addObserver:self forKeyPath:@"currentTrack" options:NSKeyValueObservingOptionNew context:NULL];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [self.rdio.player removeObserver:self forKeyPath:@"currentTrack"];
 }
 
 - (void)loadView
@@ -61,6 +69,13 @@
     button.frame = CGRectMake(self.view.bounds.size.width-margin-button.bounds.size.width, 40, button.bounds.size.width, button.bounds.size.height);
     [button addTarget:self action:@selector(signInActivated:) forControlEvents:UIControlEventTouchUpInside];
     self.signInButton = button;
+
+    button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [button setTitle:@"Now playing: " forState:UIControlStateNormal];
+    [button sizeToFit];
+    button.frame = CGRectMake(margin, 140, button.bounds.size.width, button.bounds.size.height);
+    [button addTarget:self action:@selector(nowPlayingActivated:) forControlEvents:UIControlEventTouchUpInside];
+    self.nowPlayingButton = button;
 
     button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [button setTitle:@"Next Album" forState:UIControlStateNormal];
@@ -88,6 +103,7 @@
     [self.view addSubview:label];
     [self.view addSubview:self.signInButton];
     [self.view addSubview:self.nextButton];
+    [self.view addSubview:self.nowPlayingButton];
     [self.view addSubview:self.playPauseButton];
     [self.view addSubview:self.previousTrackButton];
     [self.view addSubview:self.nextTrackButton];
@@ -239,6 +255,27 @@
 {
     if (self.albums.count > 0) {
         [self.rdio.player playSource:self.albums[0][@"key"]];
+    }
+}
+
+- (void)nowPlayingActivated:(id)sender
+{
+    NSString *track = self.rdio.player.currentTrack;
+    if (track.length) {
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://m.rdio.com/api/json/get/?keys=%@", track]];
+        [[UIApplication sharedApplication] openURL:url];
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (object == self.rdio.player) {
+        if ([keyPath isEqualToString:@"currentTrack"]) {
+            NSString *track = self.rdio.player.currentTrack;
+            NSString *title = [NSString stringWithFormat:@"Now playing: %@", track];
+            [self.nowPlayingButton setTitle:title forState:UIControlStateNormal];
+            [self.nowPlayingButton sizeToFit];
+        }
     }
 }
 
