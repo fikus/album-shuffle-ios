@@ -16,7 +16,7 @@
     int albumIndex_;
 }
 
-@property (nonatomic, strong) Rdio* rdio;
+@property (nonatomic, strong) Rdio *rdio;
 @property (nonatomic, strong) UIButton *signInButton;
 @property (nonatomic, strong) UIButton *nextButton;
 @property (nonatomic, strong) UIButton *playPauseButton;
