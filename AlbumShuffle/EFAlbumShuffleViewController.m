@@ -27,6 +27,7 @@
 - (void)loadAlbums;
 - (void)shuffleAlbums;
 - (void)playFirstAlbum;
+- (UIButton *)createControlButtonWithTitle:(NSString *)title action:(SEL)action;
 
 @end
 
@@ -71,19 +72,36 @@
     [button addTarget:self action:@selector(nextAlbumActivated:) forControlEvents:UIControlEventTouchUpInside];
     self.nextButton = button;
 
-    button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [button setTitle:@" " forState:UIControlStateNormal];
-    button.titleLabel.font = [UIFont boldSystemFontOfSize:40];
-    [button sizeToFit];
+    button = [self createControlButtonWithTitle:@" " action:@selector(playPauseActivated:)];
     CGFloat left = (floor)(self.view.bounds.size.width/2 - button.bounds.size.width/2);
     button.frame = CGRectMake(left, 400, button.bounds.size.width, button.bounds.size.height);
-    [button addTarget:self action:@selector(playPauseActivated:) forControlEvents:UIControlEventTouchUpInside];
     self.playPauseButton = button;
+
+    button = [self createControlButtonWithTitle:@"<<" action:@selector(previousTrackActivated:)];
+    button.frame = CGRectMake(margin, 400, button.bounds.size.width, button.bounds.size.height);
+    self.previousTrackButton = button;
+
+    button = [self createControlButtonWithTitle:@">>" action:@selector(nextTrackActivated:)];
+    button.frame = CGRectMake(self.view.bounds.size.width-margin-button.bounds.size.width, 400, button.bounds.size.width, button.bounds.size.height);
+    self.nextTrackButton = button;
 
     [self.view addSubview:label];
     [self.view addSubview:self.signInButton];
     [self.view addSubview:self.nextButton];
     [self.view addSubview:self.playPauseButton];
+    [self.view addSubview:self.previousTrackButton];
+    [self.view addSubview:self.nextTrackButton];
+}
+
+- (UIButton *)createControlButtonWithTitle:(NSString *)title action:(SEL)action
+{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    button.titleLabel.font = [UIFont boldSystemFontOfSize:40];
+    [button setTitle:title forState:UIControlStateNormal];
+    [button sizeToFit];
+    [button addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
+
+    return button;
 }
 
 - (void)viewDidLoad
@@ -175,6 +193,16 @@
 - (void)playPauseActivated:(id)sender
 {
     [self.rdio.player togglePause];
+}
+
+- (void)previousTrackActivated:(id)sender
+{
+    [self.rdio.player previous];
+}
+
+- (void)nextTrackActivated:(id)sender
+{
+    [self.rdio.player next];
 }
 
 #pragma mark -
