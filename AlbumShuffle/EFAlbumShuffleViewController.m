@@ -12,6 +12,8 @@
 #import "EFRdioSettings.h"
 #import "EFRdioRequestDelegate.h"
 
+#import "UIKit+AFNetworking.h"
+
 @interface EFAlbumShuffleViewController () <RdioDelegate, RDPlayerDelegate>
 {
     int albumIndex_;
@@ -29,6 +31,8 @@
 @property (nonatomic, strong) UIButton *nowPlayingButton;
 @property (nonatomic, copy) NSArray *albums;
 @property (nonatomic, strong) NSDictionary *currentTrack;
+@property (nonatomic, strong) UIImageView *albumImage;
+@property (nonatomic, copy) NSString *albumImageUrlString;
 
 - (void)loadAlbums;
 - (void)shuffleAlbums;
@@ -92,18 +96,23 @@
     [button addTarget:self action:@selector(nextAlbumActivated:) forControlEvents:UIControlEventTouchUpInside];
     self.nextButton = button;
 
+    CGFloat buttonTop = 500;
+
     button = [self createControlButtonWithTitle:@" " action:@selector(playPauseActivated:)];
     CGFloat left = (floor)(self.view.bounds.size.width/2 - button.bounds.size.width/2);
-    button.frame = CGRectMake(left, 400, button.bounds.size.width, button.bounds.size.height);
+    button.frame = CGRectMake(left, buttonTop, button.bounds.size.width, button.bounds.size.height);
     self.playPauseButton = button;
 
     button = [self createControlButtonWithTitle:@"<<" action:@selector(previousTrackActivated:)];
-    button.frame = CGRectMake(margin, 400, button.bounds.size.width, button.bounds.size.height);
+    button.frame = CGRectMake(margin, buttonTop, button.bounds.size.width, button.bounds.size.height);
     self.previousTrackButton = button;
 
     button = [self createControlButtonWithTitle:@">>" action:@selector(nextTrackActivated:)];
-    button.frame = CGRectMake(self.view.bounds.size.width-margin-button.bounds.size.width, 400, button.bounds.size.width, button.bounds.size.height);
+    button.frame = CGRectMake(self.view.bounds.size.width-margin-button.bounds.size.width, buttonTop, button.bounds.size.width, button.bounds.size.height);
     self.nextTrackButton = button;
+
+    CGFloat imageSize = self.view.bounds.size.width - 2*margin;
+    self.albumImage = [[UIImageView alloc] initWithFrame:CGRectMake(margin, 200, imageSize, imageSize)];
 
     [self.view addSubview:label];
     [self.view addSubview:self.signInButton];
@@ -112,6 +121,7 @@
     [self.view addSubview:self.playPauseButton];
     [self.view addSubview:self.previousTrackButton];
     [self.view addSubview:self.nextTrackButton];
+    [self.view addSubview:self.albumImage];
 }
 
 - (UIButton *)createControlButtonWithTitle:(NSString *)title action:(SEL)action
@@ -191,6 +201,12 @@
         NSString *buttonTitle = [NSString stringWithFormat:@"Now playing: %@", name];
         [self.nowPlayingButton setTitle:buttonTitle forState:UIControlStateNormal];
         [self.nowPlayingButton sizeToFit];
+
+        NSString *iconUrlString = responseTrack[@"bigIcon"];
+        if (iconUrlString != self.albumImageUrlString) {
+            [self.albumImage setImageWithURL:[NSURL URLWithString:iconUrlString]];
+            self.albumImageUrlString = iconUrlString;
+        }
     }
 }
 
@@ -292,12 +308,15 @@
     if (object == self.rdio.player) {
         if ([keyPath isEqualToString:@"currentTrack"]) {
             NSString *track = self.rdio.player.currentTrack;
+            if (!track) {
+                return;
+            }
             if (!trackRequestDelegate_) {
                 trackRequestDelegate_ = [EFRdioRequestDelegate delegateWithTarget:self
                                                                      loadSelector:@selector(trackRequest:didLoad:)
                                                                      failSelector:@selector(rdioRequest:didFailWithError:)];
             }
-            id params = @{@"keys": track, @"extras": @"-*,name,shortUrl"};
+            id params = @{@"keys": track, @"extras": @"-*,name,shortUrl,bigIcon"};
             [self.rdio callAPIMethod:@"get" withParameters:params delegate:trackRequestDelegate_];
         }
     }
