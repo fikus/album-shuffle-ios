@@ -25,6 +25,7 @@
 		E48C8AE7190622AF00548C47 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AE6190622AF00548C47 /* CFNetwork.framework */; };
 		E48C8AE9190622BD00548C47 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AE8190622BD00548C47 /* AudioToolbox.framework */; };
 		E48C8AEB190622CB00548C47 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AEA190622CB00548C47 /* Security.framework */; };
+		E4BD4D65190929AC00191FD1 /* EFRdioRequestDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E4BD4D64190929AC00191FD1 /* EFRdioRequestDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,8 @@
 		E48C8AEA190622CB00548C47 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		E48C8AEC1906269100548C47 /* EFRdioSettings.sample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EFRdioSettings.sample.h; sourceTree = "<group>"; };
 		E48C8AED190627A900548C47 /* EFRdioSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EFRdioSettings.h; sourceTree = "<group>"; };
+		E4BD4D63190929AC00191FD1 /* EFRdioRequestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EFRdioRequestDelegate.h; sourceTree = "<group>"; };
+		E4BD4D64190929AC00191FD1 /* EFRdioRequestDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EFRdioRequestDelegate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +143,8 @@
 				E48C8ADC1906203800548C47 /* EFAlbumShuffleViewController.m */,
 				E48C8AED190627A900548C47 /* EFRdioSettings.h */,
 				E48C8AEC1906269100548C47 /* EFRdioSettings.sample.h */,
+				E4BD4D63190929AC00191FD1 /* EFRdioRequestDelegate.h */,
+				E4BD4D64190929AC00191FD1 /* EFRdioRequestDelegate.m */,
 			);
 			path = AlbumShuffle;
 			sourceTree = "<group>";
@@ -272,6 +277,7 @@
 				E48C8AB919061F2300548C47 /* main.m in Sources */,
 				E48C8ADD1906203800548C47 /* EFAlbumShuffleViewController.m in Sources */,
 				E48C8ABD19061F2300548C47 /* EFAppDelegate.m in Sources */,
+				E4BD4D65190929AC00191FD1 /* EFRdioRequestDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,10 +10,14 @@
 
 #import "EFAlbumShuffleViewController.h"
 #import "EFRdioSettings.h"
+#import "EFRdioRequestDelegate.h"
 
-@interface EFAlbumShuffleViewController () <RdioDelegate, RDAPIRequestDelegate, RDPlayerDelegate>
+@interface EFAlbumShuffleViewController () <RdioDelegate, RDPlayerDelegate>
 {
     int albumIndex_;
+
+    EFRdioRequestDelegate *collectionDelegate_;
+    EFRdioRequestDelegate *trackRequestDelegate_;
 }
 
 @property (nonatomic, strong) Rdio *rdio;
@@ -24,6 +28,7 @@
 @property (nonatomic, strong) UIButton *previousTrackButton;
 @property (nonatomic, strong) UIButton *nowPlayingButton;
 @property (nonatomic, copy) NSArray *albums;
+@property (nonatomic, strong) NSDictionary *currentTrack;
 
 - (void)loadAlbums;
 - (void)shuffleAlbums;
@@ -161,12 +166,10 @@
 }
 
 #pragma mark -
-#pragma mark RDAPIRequestDelegate
+#pragma mark API Request Handlers
 
-- (void)rdioRequest:(RDAPIRequest *)request didLoadData:(id)data
+- (void)albumsInCollectionRequest:(RDAPIRequest *)request didLoad:(id)data
 {
-    // This is the response from getAlbumsInCollection
-
     // Get the streamable albums from the collection
     self.albums = [(NSArray *)data filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *dict) {
         return [[obj valueForKey:@"canStream"] boolValue];
@@ -174,6 +177,21 @@
 
     [self shuffleAlbums];
     [self playFirstAlbum];
+}
+
+- (void)trackRequest:(RDAPIRequest *)request didLoad:(id)data
+{
+    NSDictionary *response = data;
+    NSString *currentTrack = [self.rdio.player currentTrack];
+
+    NSDictionary *responseTrack = response[currentTrack];
+    if (responseTrack) {
+        self.currentTrack = responseTrack;
+        NSString *name = responseTrack[@"name"];
+        NSString *buttonTitle = [NSString stringWithFormat:@"Now playing: %@", name];
+        [self.nowPlayingButton setTitle:buttonTitle forState:UIControlStateNormal];
+        [self.nowPlayingButton sizeToFit];
+    }
 }
 
 - (void)rdioRequest:(RDAPIRequest *)request didFailWithError:(NSError *)error
@@ -237,8 +255,10 @@
 - (void)loadAlbums
 {
     id params = @{@"extras": @"-*,key,canStream"};
-    // TODO: Write a new API wrapper with blocks
-    [self.rdio callAPIMethod:@"getAlbumsInCollection" withParameters:params delegate:self];
+    collectionDelegate_ = [EFRdioRequestDelegate delegateWithTarget:self
+                                               loadSelector:@selector(albumsInCollectionRequest:didLoad:)
+                                               failSelector:@selector(rdioRequest:didFailWithError:)];
+    [self.rdio callAPIMethod:@"getAlbumsInCollection" withParameters:params delegate:collectionDelegate_];
 }
 
 - (void)shuffleAlbums
@@ -260,9 +280,9 @@
 
 - (void)nowPlayingActivated:(id)sender
 {
-    NSString *track = self.rdio.player.currentTrack;
-    if (track.length) {
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://m.rdio.com/api/json/get/?keys=%@", track]];
+    NSString *urlString;
+    if ((urlString = self.currentTrack[@"shortUrl"])) {
+        NSURL *url = [NSURL URLWithString:urlString];
         [[UIApplication sharedApplication] openURL:url];
     }
 }
@@ -272,9 +292,13 @@
     if (object == self.rdio.player) {
         if ([keyPath isEqualToString:@"currentTrack"]) {
             NSString *track = self.rdio.player.currentTrack;
-            NSString *title = [NSString stringWithFormat:@"Now playing: %@", track];
-            [self.nowPlayingButton setTitle:title forState:UIControlStateNormal];
-            [self.nowPlayingButton sizeToFit];
+            if (!trackRequestDelegate_) {
+                trackRequestDelegate_ = [EFRdioRequestDelegate delegateWithTarget:self
+                                                                     loadSelector:@selector(trackRequest:didLoad:)
+                                                                     failSelector:@selector(rdioRequest:didFailWithError:)];
+            }
+            id params = @{@"keys": track, @"extras": @"-*,name,shortUrl"};
+            [self.rdio callAPIMethod:@"get" withParameters:params delegate:trackRequestDelegate_];
         }
     }
 }
