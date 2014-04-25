@@ -11,6 +11,7 @@
 #import "EFAlbumShuffleViewController.h"
 #import "EFRdioSettings.h"
 #import "EFRdioRequestDelegate.h"
+#import "UIImageView+EFAdditions.h"
 
 #import "UIKit+AFNetworking.h"
 
@@ -223,7 +224,7 @@
             [self.albumImage setImageWithURLRequest:request placeholderImage:nil success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
                 weakSelf.albumImage.image = image;
                 // Update background image with blurred album art
-                [weakSelf updateBackgroundImageFromImage:image];
+                [weakSelf.backgroundImage applyBlurFromImage:image];
             } failure:NULL];
             self.albumImageUrlString = iconUrlString;
         }
@@ -340,19 +341,6 @@
             [self.rdio callAPIMethod:@"get" withParameters:params delegate:trackRequestDelegate_];
         }
     }
-}
-
-- (void)updateBackgroundImageFromImage:(UIImage *)image
-{
-    CIContext *context = [CIContext contextWithOptions:nil];
-    CIImage *inputCGImage = [CIImage imageWithCGImage:image.CGImage];
-    CIFilter *filter = [CIFilter filterWithName:@"CIGaussianBlur"];
-    [filter setValue:inputCGImage forKey:kCIInputImageKey];
-    [filter setValue:[NSNumber numberWithFloat:20.0f] forKey:@"inputRadius"];
-    CIImage *result = [filter valueForKey:kCIOutputImageKey];
-    CGRect extent = [result extent];
-    CGImageRef cgImage = [context createCGImage:result fromRect:extent];
-    self.backgroundImage.image = [UIImage imageWithCGImage:cgImage];
 }
 
 @end

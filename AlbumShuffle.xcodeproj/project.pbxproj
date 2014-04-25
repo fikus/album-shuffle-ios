@@ -25,6 +25,7 @@
 		E48C8AE7190622AF00548C47 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AE6190622AF00548C47 /* CFNetwork.framework */; };
 		E48C8AE9190622BD00548C47 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AE8190622BD00548C47 /* AudioToolbox.framework */; };
 		E48C8AEB190622CB00548C47 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C8AEA190622CB00548C47 /* Security.framework */; };
+		E49327E71909FFE30006C8DD /* UIImageView+EFAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = E49327E61909FFE30006C8DD /* UIImageView+EFAdditions.m */; };
 		E4BD4D65190929AC00191FD1 /* EFRdioRequestDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E4BD4D64190929AC00191FD1 /* EFRdioRequestDelegate.m */; };
 		E4BD4D97190935A400191FD1 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E4BD4D85190935A400191FD1 /* AFHTTPRequestOperation.m */; };
 		E4BD4D98190935A400191FD1 /* AFHTTPRequestOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E4BD4D87190935A400191FD1 /* AFHTTPRequestOperationManager.m */; };
@@ -81,6 +82,8 @@
 		E48C8AEA190622CB00548C47 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		E48C8AEC1906269100548C47 /* EFRdioSettings.sample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EFRdioSettings.sample.h; sourceTree = "<group>"; };
 		E48C8AED190627A900548C47 /* EFRdioSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EFRdioSettings.h; sourceTree = "<group>"; };
+		E49327E51909FFE30006C8DD /* UIImageView+EFAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+EFAdditions.h"; sourceTree = "<group>"; };
+		E49327E61909FFE30006C8DD /* UIImageView+EFAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+EFAdditions.m"; sourceTree = "<group>"; };
 		E4BD4D63190929AC00191FD1 /* EFRdioRequestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EFRdioRequestDelegate.h; sourceTree = "<group>"; };
 		E4BD4D64190929AC00191FD1 /* EFRdioRequestDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EFRdioRequestDelegate.m; sourceTree = "<group>"; };
 		E4BD4D84190935A400191FD1 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -200,6 +203,8 @@
 				E48C8AEC1906269100548C47 /* EFRdioSettings.sample.h */,
 				E4BD4D63190929AC00191FD1 /* EFRdioRequestDelegate.h */,
 				E4BD4D64190929AC00191FD1 /* EFRdioRequestDelegate.m */,
+				E49327E51909FFE30006C8DD /* UIImageView+EFAdditions.h */,
+				E49327E61909FFE30006C8DD /* UIImageView+EFAdditions.m */,
 			);
 			path = AlbumShuffle;
 			sourceTree = "<group>";
@@ -383,6 +388,7 @@
 				E4BD4DB5190935AC00191FD1 /* UIButton+AFNetworking.m in Sources */,
 				E4BD4DB8190935AC00191FD1 /* UIRefreshControl+AFNetworking.m in Sources */,
 				E4BD4DB4190935AC00191FD1 /* UIAlertView+AFNetworking.m in Sources */,
+				E49327E71909FFE30006C8DD /* UIImageView+EFAdditions.m in Sources */,
 				E48C8AB919061F2300548C47 /* main.m in Sources */,
 				E4BD4D9B190935A400191FD1 /* AFSecurityPolicy.m in Sources */,
 				E48C8ADD1906203800548C47 /* EFAlbumShuffleViewController.m in Sources */,
