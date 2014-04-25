@@ -127,6 +127,24 @@
     shade.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
     [self.backgroundImage addSubview:shade];
 
+    UIInterpolatingMotionEffect *hEffect = [[UIInterpolatingMotionEffect alloc]
+                                            initWithKeyPath:@"center.x"
+                                            type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+    hEffect.minimumRelativeValue = [NSNumber numberWithFloat:100];
+    hEffect.maximumRelativeValue = [NSNumber numberWithFloat:-100];
+
+    UIInterpolatingMotionEffect *vEffect = [[UIInterpolatingMotionEffect alloc]
+                                            initWithKeyPath:@"center.y"
+                                            type:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+
+    vEffect.minimumRelativeValue = [NSNumber numberWithFloat:75];
+    vEffect.maximumRelativeValue = [NSNumber numberWithFloat:-75];
+
+    UIMotionEffectGroup *effectGroup = [[UIMotionEffectGroup alloc] init];
+    effectGroup.motionEffects = @[hEffect, vEffect];
+
+    [self.backgroundImage addMotionEffect:effectGroup];
+
     [self.view addSubview:self.backgroundImage];
     [self.view addSubview:label];
     [self.view addSubview:self.signInButton];
