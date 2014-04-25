@@ -31,6 +31,7 @@
 @property (nonatomic, strong) UIButton *nowPlayingButton;
 @property (nonatomic, copy) NSArray *albums;
 @property (nonatomic, strong) NSDictionary *currentTrack;
+@property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIImageView *albumImage;
 @property (nonatomic, copy) NSString *albumImageUrlString;
 
@@ -67,10 +68,13 @@
 {
     [super loadView];
 
+    self.view.backgroundColor = [UIColor blackColor];
+    self.view.tintColor = [UIColor whiteColor];
+
     CGFloat margin = 20;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(margin, 60, self.view.bounds.size.width-2*margin, 40)];
     label.text = @"Album Shuffle";
-    label.textColor = [UIColor darkTextColor];
+    label.textColor = self.view.tintColor;
 
     UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [button setTitle:@"Sign In" forState:UIControlStateNormal];
@@ -114,6 +118,15 @@
     CGFloat imageSize = self.view.bounds.size.width - 2*margin;
     self.albumImage = [[UIImageView alloc] initWithFrame:CGRectMake(margin, 200, imageSize, imageSize)];
 
+    CGFloat bgImageSize = self.view.bounds.size.height + 100;
+    self.backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, bgImageSize, bgImageSize)];
+    self.backgroundImage.center = self.view.center;
+
+    UIView *shade = [[UIView alloc] initWithFrame:self.backgroundImage.bounds];
+    shade.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.6];
+    [self.backgroundImage addSubview:shade];
+
+    [self.view addSubview:self.backgroundImage];
     [self.view addSubview:label];
     [self.view addSubview:self.signInButton];
     [self.view addSubview:self.nextButton];
@@ -204,7 +217,14 @@
 
         NSString *iconUrlString = responseTrack[@"bigIcon"];
         if (iconUrlString != self.albumImageUrlString) {
-            [self.albumImage setImageWithURL:[NSURL URLWithString:iconUrlString]];
+            id url = [NSURL URLWithString:iconUrlString];
+            NSURLRequest *request = [NSURLRequest requestWithURL:url];
+            __weak typeof(self) weakSelf = self;
+            [self.albumImage setImageWithURLRequest:request placeholderImage:nil success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                weakSelf.albumImage.image = image;
+                // Update background image with blurred album art
+                [weakSelf updateBackgroundImageFromImage:image];
+            } failure:NULL];
             self.albumImageUrlString = iconUrlString;
         }
     }
@@ -320,6 +340,19 @@
             [self.rdio callAPIMethod:@"get" withParameters:params delegate:trackRequestDelegate_];
         }
     }
+}
+
+- (void)updateBackgroundImageFromImage:(UIImage *)image
+{
+    CIContext *context = [CIContext contextWithOptions:nil];
+    CIImage *inputCGImage = [CIImage imageWithCGImage:image.CGImage];
+    CIFilter *filter = [CIFilter filterWithName:@"CIGaussianBlur"];
+    [filter setValue:inputCGImage forKey:kCIInputImageKey];
+    [filter setValue:[NSNumber numberWithFloat:20.0f] forKey:@"inputRadius"];
+    CIImage *result = [filter valueForKey:kCIOutputImageKey];
+    CGRect extent = [result extent];
+    CGImageRef cgImage = [context createCGImage:result fromRect:extent];
+    self.backgroundImage.image = [UIImage imageWithCGImage:cgImage];
 }
 
 @end
