@@ -123,7 +123,7 @@
     self.backgroundImage.center = self.view.center;
 
     UIView *shade = [[UIView alloc] initWithFrame:self.backgroundImage.bounds];
-    shade.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.6];
+    shade.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
     [self.backgroundImage addSubview:shade];
 
     [self.view addSubview:self.backgroundImage];
