@@ -10,39 +10,37 @@
 
 @interface EFRdioRequestDelegate ()
 {
-    id target_;
-    SEL load_;
-    SEL fail_;
+    LoadedHandler load_;
+    FailedHandler fail_;
 }
 
 @end
 
 @implementation EFRdioRequestDelegate
 
-- (id)initWithTarget:(id)target loadSelector:(SEL)load failSelector:(SEL)fail
+- (id)initWithLoadedHandler:(LoadedHandler)loadedHandler failedHandler:(FailedHandler)failedHandler
 {
     self = [self init];
     if (self) {
-        target_ = target;
-        load_ = load;
-        fail_ = fail;
+        load_ = loadedHandler;
+        fail_ = failedHandler;
     }
     return self;
 }
 
-+ (EFRdioRequestDelegate *)delegateWithTarget:(id)target loadSelector:(SEL)load failSelector:(SEL)fail
++ (EFRdioRequestDelegate *)delegateWithLoadedHandler:(LoadedHandler)loadedHandler failedHandler:(FailedHandler)failedHandler
 {
-    return [[EFRdioRequestDelegate alloc] initWithTarget:target loadSelector:load failSelector:fail];
+    return [[EFRdioRequestDelegate alloc] initWithLoadedHandler:loadedHandler failedHandler:failedHandler];
 }
 
 - (void)rdioRequest:(RDAPIRequest *)request didFailWithError:(NSError *)error
 {
-    [target_ performSelector:fail_ withObject:request withObject:error];
+    fail_(request, error);
 }
 
 - (void)rdioRequest:(RDAPIRequest *)request didLoadData:(id)data
 {
-    [target_ performSelector:load_ withObject:request withObject:data];
+    load_(request, data);
 }
 
 @end

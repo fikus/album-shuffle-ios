@@ -310,9 +310,12 @@
 - (void)loadAlbums
 {
     id params = @{@"extras": @"-*,key,canStream"};
-    collectionDelegate_ = [EFRdioRequestDelegate delegateWithTarget:self
-                                               loadSelector:@selector(albumsInCollectionRequest:didLoad:)
-                                               failSelector:@selector(rdioRequest:didFailWithError:)];
+    __weak typeof(self) weakSelf = self;
+    collectionDelegate_ = [EFRdioRequestDelegate delegateWithLoadedHandler:^(RDAPIRequest *request, id data) {
+        [weakSelf albumsInCollectionRequest:request didLoad:data];
+    } failedHandler:^(RDAPIRequest *request, NSError *error) {
+        [weakSelf rdioRequest:request didFailWithError:error];
+    }];
     [self.rdio callAPIMethod:@"getAlbumsInCollection" withParameters:params delegate:collectionDelegate_];
 }
 
@@ -351,9 +354,12 @@
                 return;
             }
             if (!trackRequestDelegate_) {
-                trackRequestDelegate_ = [EFRdioRequestDelegate delegateWithTarget:self
-                                                                     loadSelector:@selector(trackRequest:didLoad:)
-                                                                     failSelector:@selector(rdioRequest:didFailWithError:)];
+                __weak typeof(self) weakSelf = self;
+                trackRequestDelegate_ = [EFRdioRequestDelegate delegateWithLoadedHandler:^(RDAPIRequest *request, id data) {
+                    [weakSelf trackRequest:request didLoad:data];
+                } failedHandler:^(RDAPIRequest *request, NSError *error) {
+                    [weakSelf rdioRequest:request didFailWithError:error];
+                }];
             }
             id params = @{@"keys": track, @"extras": @"-*,name,shortUrl,bigIcon"};
             [self.rdio callAPIMethod:@"get" withParameters:params delegate:trackRequestDelegate_];

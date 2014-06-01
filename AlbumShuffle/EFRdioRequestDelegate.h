@@ -11,8 +11,11 @@
 
 @interface EFRdioRequestDelegate : NSObject <RDAPIRequestDelegate>
 
-- (id)initWithTarget:(id)target loadSelector:(SEL)load failSelector:(SEL)fail;
+typedef void (^LoadedHandler)(RDAPIRequest *, id);
+typedef void (^FailedHandler)(RDAPIRequest *, NSError *);
 
-+ (EFRdioRequestDelegate *)delegateWithTarget:(id)target loadSelector:(SEL)load failSelector:(SEL)fail;
+- (id)initWithLoadedHandler:(LoadedHandler)loadedHandler failedHandler:(FailedHandler)failedHandler;
+
++ (EFRdioRequestDelegate *)delegateWithLoadedHandler:(LoadedHandler)loadedHandler failedHandler:(FailedHandler)failedHandler;
 
 @end
